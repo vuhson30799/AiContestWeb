@@ -13,9 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
+from AiContestWeb import uaa
+from AiContestWeb.snippets import view
+
+# Create a router and register our viewsets with it.
+from AiContestWeb.uaa.view import UserViewSet, list_user, create_user, update_user, retrieve_user
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='users')
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('users/', list_user),
+    path('users/<int:id>', retrieve_user),
+    path('users/create', create_user),
+    path('users/<int:id>/update', update_user),
+    path('snippets', view.snippet_list),
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
