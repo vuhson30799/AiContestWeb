@@ -17,6 +17,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from AiContestWeb import uaa
+from AiContestWeb.attendee.view import list_attendee, retrieve_attendee, create_attendee, update_attendee, \
+    delete_attendee
 from AiContestWeb.contest.view import list_contest, retrieve_contest, create_contest, update_contest, delete_contest
 from AiContestWeb.snippets import view
 
@@ -25,8 +27,6 @@ from AiContestWeb.uaa.view import UserViewSet, list_user, create_user, update_us
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='users')
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     # All path related to CRUD user
     path('users/', list_user),
@@ -43,6 +43,14 @@ urlpatterns = [
     path('contests/<int:id>/delete', delete_contest),
     # All path related to CRUD contest
 
+    # All path related to CRUD attendee
+    path('contests/<int:contest_id>/attendees/create', create_attendee),
+    path('attendees/', list_attendee),
+    path('attendees/<int:id>', retrieve_attendee),
+    path('attendees/<int:id>/update', update_attendee),  # Not work for now
+    path('attendees/<int:id>/delete', delete_attendee),
+    # All path related to CRUD attendee
+
     # Test
     path('snippets', view.snippet_list),
     # Test
@@ -53,3 +61,5 @@ urlpatterns = [
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
