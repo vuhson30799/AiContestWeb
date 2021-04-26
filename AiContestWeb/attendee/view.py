@@ -1,4 +1,3 @@
-from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -6,16 +5,20 @@ from rest_framework.response import Response
 
 from AiContestWeb.attendee.model import Attendee
 from AiContestWeb.attendee.serializer import AttendeeSerializer
+from AiContestWeb.common import BaseViewSet
 from AiContestWeb.uaa.permissions import IsStudentUser, IsCreatorUser
 
 
 @authentication_classes([BasicAuthentication])
-@permission_classes([IsStudentUser, IsAuthenticated])
-class AttendeeViewSet(viewsets.ModelViewSet):
+@permission_classes([IsAuthenticated])
+class AttendeeViewSet(BaseViewSet):
     queryset = Attendee.objects.all()
     serializer_class = AttendeeSerializer
     lookup_field = 'id'
     lookup_fields = ['contest_id', 'user_id']
+    permission_classes_by_action = {'create': [IsStudentUser, IsCreatorUser],
+                                    'destroy': [IsCreatorUser],
+                                    'update': [IsCreatorUser]}
 
     def list(self, request, *args, **kwargs):
         queryset = Attendee.objects.filter(**self.apply_filter_for_search())
