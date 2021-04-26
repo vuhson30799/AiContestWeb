@@ -35,6 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             is_staff=validated_data['is_staff'],
             is_creator=validated_data['is_creator'],
+            is_student=validated_data['is_student'],
             user_info=user_info
         )
         user.set_password(validated_data['password'])
@@ -44,7 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_info = UserInfo(
-            id=instance.myuser.user_info.id,
+            id=instance.user_info.id,
             first_name=validated_data['user_info']['first_name'],
             last_name=validated_data['user_info']['last_name'],
             university=validated_data['user_info']['university'],
