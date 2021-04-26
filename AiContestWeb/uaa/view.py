@@ -1,6 +1,8 @@
+from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.response import Response
 
 from AiContestWeb.common import BaseViewSet
 from AiContestWeb.uaa.model import MyUser
@@ -14,8 +16,18 @@ class UserViewSet(BaseViewSet):
     serializer_class = UserSerializer
     lookup_field = 'id'
     permission_classes_by_action = {'create': [AllowAny],
-                                    'destroy': [IsAdminUser]}
+                                    'destroy': [IsAdminUser],
+                                    'login': [IsAuthenticated]}
 
+    def login(self, *args, **kwargs):
+        queryset = MyUser.objects.get(username=self.request.user.username)
+        serializer = self.get_serializer(queryset)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+login = UserViewSet.as_view({
+    'post': 'login'
+})
 
 retrieve_user = UserViewSet.as_view({
     'get': 'retrieve'
