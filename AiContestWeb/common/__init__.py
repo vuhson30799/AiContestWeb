@@ -11,3 +11,13 @@ class BaseViewSet(viewsets.ModelViewSet):
         except KeyError:
             # action is not set return default permission_classes
             return [permission() for permission in self.permission_classes]
+
+    def check_permissions(self, request):
+        """
+        Check if the request should be permitted.
+        Raises an appropriate exception if the request is not permitted.
+        """
+        for permission in self.get_permissions():
+            if permission.has_permission(request, self):
+                return
+        self.permission_denied(request)
