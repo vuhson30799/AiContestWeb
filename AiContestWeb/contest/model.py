@@ -2,6 +2,8 @@ from gettext import gettext
 
 from django.db import models
 
+from AiContestWeb.uaa.model import MyUser
+
 
 class Contest(models.Model):
     name = models.CharField(gettext('name'), max_length=150)
@@ -12,5 +14,8 @@ class Contest(models.Model):
                                             default=False)
     is_python_available = models.BooleanField(gettext('condition if python language is permitted for contest'),
                                               default=False)
+    is_cpp_available = models.BooleanField(gettext('condition if python language is permitted for contest'),
+                                           default=False)
     register_deadline = models.DateTimeField(gettext('deadline to register the contest'))
     build_timeout = models.TimeField(gettext('time out building code'), default='00:05:00')
+    creator = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='creator')
