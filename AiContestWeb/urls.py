@@ -21,6 +21,7 @@ from AiContestWeb.attendee.view import list_attendee, retrieve_attendee, create_
     delete_attendee
 from AiContestWeb.contest.view import list_contest, retrieve_contest, create_contest, update_contest, delete_contest
 # Create a router and register our viewsets with it.
+from AiContestWeb.service.view import upload_file
 from AiContestWeb.uaa.view import UserViewSet, list_user, create_user, update_user, retrieve_user, login
 
 router = DefaultRouter()
@@ -53,6 +54,10 @@ urlpatterns = [
     path('login', login),
     path('register', create_user),
     # login, register
+
+    # file upload
+    path('contests/<int:contest_id>/upload-file', upload_file),
+    # file upload
 
     # Base
     path('', include(router.urls)),
