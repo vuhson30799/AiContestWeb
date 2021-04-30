@@ -24,8 +24,8 @@ class Utils:
         result = open(result_file)
         return result.read()
 
-    def check_right_extension(self, file, extension):
-        return file.is_file() and extension.__eq__(file.name.split('.')[1])
+    def check_right_extension(self, file, extensions):
+        return file.is_file() and file.name.split('.')[1] in extensions
 
 
 utils = Utils()

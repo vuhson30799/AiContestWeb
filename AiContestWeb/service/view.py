@@ -61,7 +61,7 @@ class FileUploadView(views.APIView):
             if user.is_student:
                 creator_dir = self.get_creator_file_path(contest_id, contest.creator.id)
 
-                file_to_run = self.get_file_to_run(contest_id, user_id)
+                file_to_run = self.get_file_to_run(contest, user_id)
                 try:
                     result = float(utils.run_code_file(file_to_run, creator_dir))
                 except Exception:
@@ -97,14 +97,26 @@ class FileUploadView(views.APIView):
                     if creator_dir.is_dir() and creator_dir.name.__eq__(str(creator_id)):
                         return creator_dir
 
-    def get_file_to_run(self, contest_id, user_id):
+    def get_file_to_run(self, contest, user_id):
+        contest_id = contest.id
+        extensions = self.get_available_extensions(contest)
         for contest_dir in self.file_upload_dir.iterdir():
             if contest_dir.is_dir() and contest_dir.name.__eq__(str(contest_id)):
                 for attendee_dir in contest_dir.iterdir():
                     if attendee_dir.is_dir() and attendee_dir.name.__eq__(str(user_id)):
                         for file in attendee_dir.iterdir():
-                            if utils.check_right_extension(file=file, extension='py'):
+                            if utils.check_right_extension(file=file, extensions=extensions):
                                 return file
+
+    def get_available_extensions(self, contest):
+        extensions = []
+        if contest.is_java_available:
+            extensions.append('java')
+        if contest.is_cpp_available:
+            extensions.append('cpp')
+        if contest.is_python_available:
+            extensions.append('py')
+        return extensions
 
 
 upload_file = FileUploadView.as_view()
