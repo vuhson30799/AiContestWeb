@@ -34,11 +34,12 @@ class FileUploadView(views.APIView):
             except Exception:
                 return Response(data={'detail': 'This contest is not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-            try:
-                attendee = Attendee.objects.get(contest_id=contest_id, user_id=user_id)
-            except Exception:
-                return Response(data={'detail': 'User has not been applied for this contest.'},
-                                status=status.HTTP_404_NOT_FOUND)
+            if not (user.is_creator or user.is_staff):
+                try:
+                    attendee = Attendee.objects.get(contest_id=contest_id, user_id=user_id)
+                except Exception:
+                    return Response(data={'detail': 'User has not been applied for this contest.'},
+                                    status=status.HTTP_404_NOT_FOUND)
 
             if contest.begin > pytz.utc.localize(datetime.now()) or pytz.utc.localize(datetime.now()) > contest.end:
                 return Response(data={'detail': 'This contest has already closed.'},
